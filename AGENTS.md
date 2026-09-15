@@ -1,165 +1,171 @@
-# Project Instructions
+# AGENTS.md
 
 ## Project
 
-This is a university deep-learning project about image inpainting.
+This is a university Deep Learning project about image inpainting.
 
 The project compares:
 
 1. U-Net
-2. A lightweight Vision Transformer reconstruction model
+2. A lightweight Vision Transformer (ViT)
 3. A weighted ensemble of U-Net and ViT
 
-The dataset is Oxford-IIIT Pets.
+The full project specification is in:
 
-Images will be resized to 128x128 pixels.
+PROJECT_DESCRIPTION.md
 
-Artificial masks will be used to create missing image regions.
+Read that file before making major implementation decisions.
 
-Main mask sizes:
+## Main Rules
+
+Keep the project simple.
+
+This is not a production software project.
+
+The main implementation must stay inside:
+
+notebooks/image_inpainting.ipynb
+
+Do not create unnecessary infrastructure such as:
+
+- src/
+- configs/
+- tests/
+- splits/
+- CLI tools
+- experiment managers
+- YAML configuration systems
+- model registries
+- deployment code
+
+Do not add new top-level directories unless explicitly requested.
+
+## Dataset
+
+Use the Oxford-IIIT Pet Dataset.
+
+Resize images to 128x128.
+
+Use deterministic train/validation/test splits.
+
+The same splits must be used for U-Net and ViT.
+
+Do not use the test set for model selection or ensemble-weight selection.
+
+## Inpainting Task
+
+Artificial masks will be applied to complete images.
+
+The masked image is the model input.
+
+The original complete image is the target.
+
+Primary mask sizes:
 
 - 24x24
 - 32x32
 - 48x48
 
-The project will evaluate:
+Support:
+
+- central rectangular masks
+- randomly positioned rectangular masks
+
+Keep masking simple.
+
+## Models
+
+### U-Net
+
+Use a lightweight U-Net-style encoder-decoder with skip connections.
+
+### ViT
+
+Use a lightweight ViT-based reconstruction model.
+
+A reasonable starting configuration is:
+
+- image size: 128
+- patch size: 16
+- embedding dimension: 128 or 256
+- about 4 attention heads
+- about 4 Transformer blocks
+
+Keep it practical for Google Colab.
+
+### Ensemble
+
+Use a simple weighted average:
+
+ensemble = alpha * unet_prediction + (1 - alpha) * vit_prediction
+
+Choose alpha using the validation set, not the test set.
+
+## Evaluation
+
+Required metrics:
 
 - MSE
 - PSNR
 - SSIM
-- qualitative reconstruction quality
-- failure cases
 
-The final deliverables are a well-documented Google Colab notebook and
-an approximately 12-page academic report.
+Also include:
 
-## Important Simplicity Requirement
+- qualitative reconstruction examples
+- comparison of different mask sizes
+- failure-case analysis
 
-Keep this project simple.
+Useful visual layout:
 
-This is a university experimental project, not a production software
-engineering project.
+Original | Masked | U-Net | ViT | Ensemble
 
-DO NOT create additional architecture or infrastructure unless explicitly
-requested.
+Never fabricate results.
 
-In particular, do not create:
+## Notebook Structure
 
-- src/ packages
-- configuration systems
-- YAML experiment files
-- formal test suites
-- persistent split files
-- command-line applications
-- unnecessary abstractions
-- complex training frameworks
-
-The main implementation should remain inside:
-
-notebooks/image_inpainting.ipynb
-
-Use ordinary Python functions and PyTorch classes inside the notebook to
-keep the code readable and understandable.
-
-## Repository Structure
-
-Keep the repository approximately as follows:
-
-AGENTS.md
-README.md
-requirements.txt
-notebooks/
-    image_inpainting.ipynb
-results/
-    plots/
-    reconstructions/
-
-Do not add new top-level directories without explicit permission.
-
-## Notebook Organization
-
-The notebook should eventually contain approximately these sections:
+The notebook should roughly contain:
 
 1. Introduction
-2. Setup and imports
-3. Experiment configuration
-4. Dataset loading
-5. Dataset splitting
-6. Image preprocessing
-7. Mask generation
-8. Mask visualization
-9. U-Net
-10. U-Net training
-11. Lightweight ViT
-12. ViT training
-13. Evaluation
-14. Ensemble
-15. Mask-size experiments
-16. Quantitative comparison
-17. Qualitative comparison
-18. Failure analysis
-19. Conclusion
+2. Imports and configuration
+3. Dataset loading
+4. Train/validation/test split
+5. Mask generation
+6. Mask visualization
+7. U-Net
+8. U-Net training/evaluation
+9. ViT
+10. ViT training/evaluation
+11. Ensemble
+12. Mask-size experiments
+13. Quantitative comparison
+14. Qualitative comparison
+15. Failure analysis
+16. Conclusion
 
-## Implementation Style
-
-Prefer simple functions and classes.
-
-Examples:
-
-- create_mask(...)
-- train_model(...)
-- evaluate_model(...)
-- compute_metrics(...)
-- UNet
-- InpaintingViT
-
-Do not move these into separate modules unless explicitly requested.
-
-Use clear Markdown cells to explain important steps.
-
-Keep important experiment settings visible in one notebook cell.
-
-For example:
-
-SEED
-IMAGE_SIZE
-BATCH_SIZE
-LEARNING_RATE
-NUM_EPOCHS
-MASK_SIZES
-DEVICE
-
-## Reproducibility
-
-Use fixed random seeds for:
-
-- Python
-- NumPy
-- PyTorch
-
-Create one deterministic train/validation/test split.
-
-The same split must be used for U-Net and ViT.
-
-The test set must not be used for model selection or hyperparameter tuning.
-
-## Computational Constraints
-
-The project must be practical to run on Google Colab.
-
-Prefer lightweight architectures and reasonable training times.
-
-Avoid unnecessary experiments or very large models.
-
-## Academic Requirements
-
-Do not fabricate results.
-
-All numerical results must come from actual experiments.
-
-Keep the implementation simple enough that every important component can
-be understood and explained during a possible discussion with the professor.
-
-Do not implement multiple major stages at once unless explicitly requested.
+## Working Style
 
 Work incrementally.
+
+Do not implement the whole project at once.
+
+Preferred order:
+
+1. Dataset
+2. Masks
+3. U-Net
+4. U-Net training/evaluation
+5. ViT
+6. ViT training/evaluation
+7. Ensemble
+8. Additional mask experiments
+9. Final comparisons and cleanup
+
+Before making a major change:
+
+1. inspect the current notebook
+2. modify only the requested stage
+3. avoid unrelated changes
+4. keep the code readable
+5. explain important decisions
+
+Prefer simple PyTorch code that is easy to understand and explain.
