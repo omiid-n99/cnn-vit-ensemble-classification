@@ -31,3 +31,12 @@ data/
 
 # Environment variables
 .env
+
+# Downloaded dataset
+data/
+
+# Model checkpoints
+checkpoints/
+*.pt
+*.pth
+*.ckpt
