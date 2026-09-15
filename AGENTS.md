@@ -1,195 +1,165 @@
 # Project Instructions
 
-## Project Overview
+## Project
 
-This is a university deep-learning project focused on image classification.
+This is a university deep-learning project about image inpainting.
 
-The project will compare:
+The project compares:
 
-1. A conventional CNN baseline.
-2. A proposed deep-learning approach.
-3. A Vision Transformer (ViT).
-4. Ensemble models combining selected trained models.
+1. U-Net
+2. A lightweight Vision Transformer reconstruction model
+3. A weighted ensemble of U-Net and ViT
 
-The final project must include a fair experimental comparison between
-the approaches.
+The dataset is Oxford-IIIT Pets.
 
-The final submission will consist of:
-- a well-documented implementation/notebook
-- experimental results
-- plots and comparison tables
-- an approximately 12-page academic report
+Images will be resized to 128x128 pixels.
 
-## Computational Constraints
+Artificial masks will be used to create missing image regions.
 
-Experiments must be feasible on Google Colab.
+Main mask sizes:
 
-Prefer:
-- lightweight models
-- transfer learning where appropriate
-- reasonable image resolutions
-- reasonable batch sizes
-- efficient training procedures
+- 24x24
+- 32x32
+- 48x48
 
-Avoid unnecessarily expensive architectures or experiments.
+The project will evaluate:
 
-## Framework
+- MSE
+- PSNR
+- SSIM
+- qualitative reconstruction quality
+- failure cases
 
-Use Python and PyTorch.
+The final deliverables are a well-documented Google Colab notebook and
+an approximately 12-page academic report.
 
-Prefer standard, well-maintained libraries such as:
-- torch
-- torchvision
-- timm
-- scikit-learn
-- numpy
-- pandas
-- matplotlib
+## Important Simplicity Requirement
 
-Do not introduce unnecessary dependencies.
+Keep this project simple.
+
+This is a university experimental project, not a production software
+engineering project.
+
+DO NOT create additional architecture or infrastructure unless explicitly
+requested.
+
+In particular, do not create:
+
+- src/ packages
+- configuration systems
+- YAML experiment files
+- formal test suites
+- persistent split files
+- command-line applications
+- unnecessary abstractions
+- complex training frameworks
+
+The main implementation should remain inside:
+
+notebooks/image_inpainting.ipynb
+
+Use ordinary Python functions and PyTorch classes inside the notebook to
+keep the code readable and understandable.
 
 ## Repository Structure
 
-Use the existing repository structure.
+Keep the repository approximately as follows:
 
-src/
-    data.py
-    train.py
-    evaluate.py
-    utils.py
-    models/
-        baseline.py
-        proposed_model.py
-        vit.py
-        ensemble.py
-
-configs/
+AGENTS.md
+README.md
+requirements.txt
 notebooks/
+    image_inpainting.ipynb
 results/
-tests/
+    plots/
+    reconstructions/
 
-Keep reusable logic inside src/.
+Do not add new top-level directories without explicit permission.
 
-The notebook should orchestrate experiments rather than contain large
-amounts of duplicated implementation code.
+## Notebook Organization
 
-## Experimental Requirements
+The notebook should eventually contain approximately these sections:
 
-All model comparisons must be fair.
+1. Introduction
+2. Setup and imports
+3. Experiment configuration
+4. Dataset loading
+5. Dataset splitting
+6. Image preprocessing
+7. Mask generation
+8. Mask visualization
+9. U-Net
+10. U-Net training
+11. Lightweight ViT
+12. ViT training
+13. Evaluation
+14. Ensemble
+15. Mask-size experiments
+16. Quantitative comparison
+17. Qualitative comparison
+18. Failure analysis
+19. Conclusion
 
-Use:
-- the same train/validation/test splits
-- the same held-out test set
-- consistent preprocessing where appropriate
-- consistent evaluation metrics
-- fixed random seeds
+## Implementation Style
 
-The test set must never be used for:
-- training
-- hyperparameter selection
-- model selection
+Prefer simple functions and classes.
 
-Prevent data leakage.
+Examples:
+
+- create_mask(...)
+- train_model(...)
+- evaluate_model(...)
+- compute_metrics(...)
+- UNet
+- InpaintingViT
+
+Do not move these into separate modules unless explicitly requested.
+
+Use clear Markdown cells to explain important steps.
+
+Keep important experiment settings visible in one notebook cell.
+
+For example:
+
+SEED
+IMAGE_SIZE
+BATCH_SIZE
+LEARNING_RATE
+NUM_EPOCHS
+MASK_SIZES
+DEVICE
 
 ## Reproducibility
 
-Set random seeds for:
+Use fixed random seeds for:
+
 - Python
 - NumPy
 - PyTorch
-- CUDA when available
 
-Experiments should be reproducible as far as reasonably possible.
+Create one deterministic train/validation/test split.
 
-Important hyperparameters must be configurable rather than hardcoded.
+The same split must be used for U-Net and ViT.
 
-## Evaluation
+The test set must not be used for model selection or hyperparameter tuning.
 
-At minimum, support:
+## Computational Constraints
 
-- accuracy
-- precision
-- recall
-- F1-score
-- confusion matrix
-- training loss curves
-- validation loss curves
-- training/validation accuracy curves
+The project must be practical to run on Google Colab.
 
-Where appropriate, include:
-- per-class metrics
-- parameter count
-- training time
+Prefer lightweight architectures and reasonable training times.
 
-Results should be exportable to files under results/.
+Avoid unnecessary experiments or very large models.
 
-## Results
+## Academic Requirements
 
-Use:
+Do not fabricate results.
 
-results/metrics/
-results/plots/
-results/tables/
+All numerical results must come from actual experiments.
 
-Save machine-readable metrics as CSV or JSON where appropriate.
+Keep the implementation simple enough that every important component can
+be understood and explained during a possible discussion with the professor.
 
-Figures should be suitable for inclusion in the final academic report.
+Do not implement multiple major stages at once unless explicitly requested.
 
-## Code Quality
-
-Code should be:
-- modular
-- readable
-- documented
-- reasonably typed where useful
-- easy to execute from Google Colab
-
-Avoid:
-- unnecessary abstractions
-- excessive boilerplate
-- duplicated code
-- hardcoded local paths
-
-Use docstrings for important classes and functions.
-
-## Testing
-
-Add lightweight tests and sanity checks for important components.
-
-Tests should not require full model training.
-
-Useful tests include:
-- dataset loading
-- expected tensor shapes
-- model forward passes
-- output dimensions
-- ensemble calculations
-
-## Model Development
-
-Do not implement several major components at once unless explicitly asked.
-
-Preferred implementation order:
-
-1. dataset pipeline
-2. training/evaluation infrastructure
-3. CNN baseline
-4. proposed model
-5. ViT model
-6. ensemble methods
-7. experiment notebook
-8. final cleanup and review
-
-Before making a major architectural decision, explain the reasoning.
-
-## Academic Integrity
-
-Do not fabricate experimental results.
-
-Any reported performance values must come from actual experiments.
-
-When interpreting results, distinguish clearly between measured results
-and hypotheses or explanations.
-
-The implementation should be understandable enough that the student can
-explain and defend it during a possible discussion with the professor.
+Work incrementally.

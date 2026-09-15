@@ -1,10 +1,7 @@
 torch
 torchvision
-timm
-scikit-learn
 numpy
 pandas
 matplotlib
-PyYAML
+scikit-image
 tqdm
-pytest
